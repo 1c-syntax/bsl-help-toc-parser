@@ -46,3 +46,37 @@ sourceSets {
         resources.srcDirs("src/test/resources")
     }
 }
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+            pom {
+                description.set("Parser for table of content 1C: Enterprise syntax helper in ANTLR4 format.")
+                url.set("https://github.com/1c-syntax/bsl-help-toc-parser")
+                licenses {
+                    license {
+                        name.set("MIT")
+                        url.set("https://opensource.org/licenses/MIT")
+                        distribution.set("repo")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("eightm")
+                        name.set("Viktor Gukov")
+                        email.set("zchokobo@gmail.com")
+                        url.set("https://github.com/eightm")
+                        organization.set("1c-syntax")
+                        organizationUrl.set("https://github.com/1c-syntax")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:git://github.com/1c-syntax/bsl-help-toc-parser.git")
+                    developerConnection.set("scm:git:git@github.com:1c-syntax/bsl-help-toc-parser.git")
+                    url.set("https://github.com/1c-syntax/bsl-help-toc-parser")
+                }
+            }
+        }
+    }
+}
