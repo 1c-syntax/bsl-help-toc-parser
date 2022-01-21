@@ -1,3 +1,5 @@
+import java.net.URI
+
 plugins {
     java
     antlr
@@ -13,6 +15,7 @@ java {
 
 repositories {
     mavenCentral()
+    maven { url = URI("https://jitpack.io") }
 }
 
 dependencies {
