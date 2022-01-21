@@ -1,12 +1,11 @@
-import java.net.URI
-
 plugins {
-    java
+    `java-library`
     antlr
+    `maven-publish`
 }
 
 group = "com.github.eightm"
-version = "1.0-SNAPSHOT"
+version = "0.1"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -15,7 +14,6 @@ java {
 
 repositories {
     mavenCentral()
-    maven { url = URI("https://jitpack.io") }
 }
 
 dependencies {
