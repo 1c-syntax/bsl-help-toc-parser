@@ -5,11 +5,12 @@ plugins {
 }
 
 group = "com.github.eightm"
-version = "0.1"
+version = "0.2.0"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 }
 
 repositories {
@@ -17,7 +18,10 @@ repositories {
 }
 
 dependencies {
-    antlr("org.antlr:antlr4:4.9.3")
+    // Используем 1c-syntax fork ANTLR — у него свой ATN UUID; bsl-parser в
+    // bsl-language-server использует именно его, поэтому генерируемые из
+    // нашей грамматики .class должны быть совместимы с тем же runtime.
+    antlr("io.github.1c-syntax:antlr4:0.3.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
