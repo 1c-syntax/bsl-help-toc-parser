@@ -16,7 +16,7 @@ gitVersioning.apply {
             version = "\${ref.tagVersion}\${dirty}"
         }
 
-        branch("develop") {
+        branch("master") {
             version = "\${describe.tag.version.major}." +
                     "\${describe.tag.version.minor.next}.0." +
                     "\${describe.distance}-SNAPSHOT\${dirty}"

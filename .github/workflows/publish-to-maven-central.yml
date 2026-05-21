@@ -5,7 +5,7 @@ on:
     types: [published]
   push:
     branches:
-      - develop
+      - master
   workflow_dispatch:
 
 jobs:
