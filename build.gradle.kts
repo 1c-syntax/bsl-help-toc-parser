@@ -23,7 +23,7 @@ gitVersioning.apply {
         }
 
         branch(".+") {
-            version = "\${ref}-\${commit.short}\${dirty}"
+            version = "\${ref.slug}-\${commit.short}\${dirty}"
         }
     }
 
@@ -68,7 +68,7 @@ tasks.generateGrammarSource {
 }
 
 tasks.named<org.gradle.jvm.tasks.Jar>("sourcesJar") {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     dependsOn(tasks.generateGrammarSource)
 }
 

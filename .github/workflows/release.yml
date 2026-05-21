@@ -1,16 +1,15 @@
-name: Make image
+name: Upload release asset
 
 on:
     release:
         types: [published]
 
+permissions:
+    contents: write
+
 jobs:
     build:
-      runs-on: ${{ matrix.os }}
-      strategy:
-        fail-fast: true
-        matrix:
-          os: [ ubuntu-latest, windows-latest, macOS-latest ]
+      runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v6
           with:
@@ -19,12 +18,9 @@ jobs:
         - uses: actions/setup-java@v5
           with:
             java-version: 21
-            distribution: 'adopt'
-        - run: ./gradlew check --stacktrace
-        - if: matrix.os == 'ubuntu-latest'
-          run: ./gradlew build
-        - if: matrix.os == 'ubuntu-latest'
-          uses: AButler/upload-release-assets@v4.0
+            distribution: 'temurin'
+        - run: ./gradlew build
+        - uses: AButler/upload-release-assets@v4.0
           with:
             files: './build/libs/*.jar'
             repo-token: ${{ secrets.GITHUB_TOKEN }}
