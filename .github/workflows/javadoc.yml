@@ -1,0 +1,24 @@
+name: javadoc
+
+on:
+  push:
+    branches-ignore:
+      - "translations_*"
+  pull_request:
+
+jobs:
+  build-javadoc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: 21
+          distribution: 'temurin'
+          cache: gradle
+      - name: Check javadoc build
+        run: ./gradlew javadoc --stacktrace

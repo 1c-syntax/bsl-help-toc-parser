@@ -5,6 +5,10 @@ plugins {
     antlr
     `maven-publish`
     id("me.qoomon.git-versioning") version "6.4.4"
+    id("io.freefair.javadoc-links") version "9.2.0"
+    id("io.freefair.javadoc-utf-8") version "9.2.0"
+    id("io.freefair.maven-central.validate-poms") version "9.2.0"
+    id("ru.vyarus.pom") version "3.0.0"
     id("org.jreleaser") version "1.24.0"
 }
 
@@ -72,6 +76,18 @@ tasks.named<org.gradle.jvm.tasks.Jar>("sourcesJar") {
     dependsOn(tasks.generateGrammarSource)
 }
 
+tasks.javadoc {
+    options {
+        this as StandardJavadocDocletOptions
+        links("https://javadoc.io/doc/org.antlr/antlr4-runtime/latest")
+    }
+    isFailOnError = false
+}
+
+tasks.withType<PublishToMavenRepository>().configureEach {
+    dependsOn(tasks.validatePomFiles)
+}
+
 sourceSets {
     main {
         java.srcDirs("src/main/java", "src/main/gen")
@@ -94,6 +110,7 @@ publishing {
         create<MavenPublication>("maven") {
             from(components["java"])
             pom {
+                name.set("BSL Help TOC Parser")
                 description.set("Parser for table of content 1C: Enterprise syntax helper in ANTLR4 format.")
                 url.set("https://github.com/1c-syntax/bsl-help-toc-parser")
                 licenses {
