@@ -1,16 +1,43 @@
+import org.jreleaser.model.Active.*
+
 plugins {
     `java-library`
     antlr
     `maven-publish`
+    id("me.qoomon.git-versioning") version "6.4.4"
+    id("org.jreleaser") version "1.24.0"
 }
 
-group = "com.github.eightm"
-version = "0.2.0"
+group = "io.github.1c-syntax"
+gitVersioning.apply {
+    refs {
+        describeTagFirstParent = false
+        tag("v(?<tagVersion>[0-9].*)") {
+            version = "\${ref.tagVersion}\${dirty}"
+        }
+
+        branch("develop") {
+            version = "\${describe.tag.version.major}." +
+                    "\${describe.tag.version.minor.next}.0." +
+                    "\${describe.distance}-SNAPSHOT\${dirty}"
+        }
+
+        branch(".+") {
+            version = "\${ref}-\${commit.short}\${dirty}"
+        }
+    }
+
+    rev {
+        version = "\${commit.short}\${dirty}"
+    }
+}
 
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
     }
+    withSourcesJar()
+    withJavadocJar()
 }
 
 repositories {
@@ -40,6 +67,11 @@ tasks.generateGrammarSource {
     outputDirectory = file("src/main/gen/com/github/eightm/parser")
 }
 
+tasks.named<org.gradle.jvm.tasks.Jar>("sourcesJar") {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    dependsOn(tasks.generateGrammarSource)
+}
+
 sourceSets {
     main {
         java.srcDirs("src/main/java", "src/main/gen")
@@ -52,6 +84,12 @@ sourceSets {
 }
 
 publishing {
+    repositories {
+        maven {
+            name = "staging"
+            url = layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
+        }
+    }
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
@@ -79,6 +117,43 @@ publishing {
                     connection.set("scm:git:git://github.com/1c-syntax/bsl-help-toc-parser.git")
                     developerConnection.set("scm:git:git@github.com:1c-syntax/bsl-help-toc-parser.git")
                     url.set("https://github.com/1c-syntax/bsl-help-toc-parser")
+                }
+                issueManagement {
+                    system.set("GitHub Issues")
+                    url.set("https://github.com/1c-syntax/bsl-help-toc-parser/issues")
+                }
+                ciManagement {
+                    system.set("GitHub Actions")
+                    url.set("https://github.com/1c-syntax/bsl-help-toc-parser/actions")
+                }
+            }
+        }
+    }
+}
+
+jreleaser {
+    signing {
+        active = ALWAYS
+        armored = true
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                create("release-deploy") {
+                    active = RELEASE
+                    url = "https://central.sonatype.com/api/v1/publisher"
+                    stagingRepository("build/staging-deploy")
+                }
+            }
+            nexus2 {
+                create("snapshot-deploy") {
+                    active = SNAPSHOT
+                    snapshotUrl = "https://central.sonatype.com/repository/maven-snapshots/"
+                    applyMavenCentralRules = true
+                    snapshotSupported = true
+                    closeRepository = true
+                    releaseRepository = true
+                    stagingRepository("build/staging-deploy")
                 }
             }
         }
