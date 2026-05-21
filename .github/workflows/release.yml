@@ -1,0 +1,26 @@
+name: Upload release asset
+
+on:
+    release:
+        types: [published]
+
+permissions:
+    contents: write
+
+jobs:
+    build:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v6
+          with:
+            fetch-depth: 0
+            persist-credentials: false
+        - uses: actions/setup-java@v5
+          with:
+            java-version: 21
+            distribution: 'temurin'
+        - run: ./gradlew build
+        - uses: AButler/upload-release-assets@v4.0
+          with:
+            files: './build/libs/*.jar'
+            repo-token: ${{ secrets.GITHUB_TOKEN }}
