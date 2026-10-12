@@ -55,6 +55,7 @@ dependencies {
     antlr("io.github.1c-syntax:antlr4:0.3.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.getByName<Test>("test") {
